@@ -36,11 +36,12 @@ object IconUtils {
      */
     fun getSeasonalIconName(context: android.content.Context): String {
         val calendar = Calendar.getInstance()
+        val seasons = context.resources.getStringArray(R.array.seasons)
         return when (calendar.get(Calendar.MONTH)) {
-            Calendar.DECEMBER, Calendar.JANUARY, Calendar.FEBRUARY -> context.getString(R.string.season_winter)
-            Calendar.MARCH, Calendar.APRIL, Calendar.MAY -> context.getString(R.string.season_spring)
-            Calendar.JUNE, Calendar.JULY, Calendar.AUGUST -> context.getString(R.string.season_summer)
-            else -> context.getString(R.string.season_fall)
+            Calendar.DECEMBER, Calendar.JANUARY, Calendar.FEBRUARY -> seasons[0] // Winter
+            Calendar.MARCH, Calendar.APRIL, Calendar.MAY -> seasons[1] // Spring
+            Calendar.JUNE, Calendar.JULY, Calendar.AUGUST -> seasons[2] // Summer
+            else -> seasons[3] // Fall
         }
     }
     
@@ -75,16 +76,17 @@ object IconUtils {
      * @return Human-readable name for the icon type
      */
     fun getIconTypeName(iconType: String, context: android.content.Context): String {
+        val iconTypes = context.resources.getStringArray(R.array.icon_types)
         return when (iconType) {
             "OFF" -> context.getString(R.string.icon_type_off)
             "SEASONAL" -> context.getString(R.string.icon_type_seasonal, getSeasonalIconName(context))
-            "WINTER" -> context.getString(R.string.icon_type_winter)
-            "SPRING" -> context.getString(R.string.icon_type_spring)
-            "SUMMER" -> context.getString(R.string.icon_type_summer)
-            "FALL" -> context.getString(R.string.icon_type_fall)
-            "KSU_NEXT" -> context.getString(R.string.icon_type_ksu_next)
-            "CANNABIS" -> context.getString(R.string.icon_type_cannabis)
-            "AMOGUS_SUSFS" -> context.getString(R.string.icon_type_amongus)
+            "WINTER" -> iconTypes[0] // Winter
+            "SPRING" -> iconTypes[1] // Spring
+            "SUMMER" -> iconTypes[2] // Summer
+            "FALL" -> iconTypes[3] // Fall
+            "KSU_NEXT" -> iconTypes[4] // KSU Next
+            "CANNABIS" -> iconTypes[5] // Cannabis
+            "AMOGUS_SUSFS" -> iconTypes[6] // Amongus
             else -> context.getString(R.string.icon_type_seasonal, getSeasonalIconName(context))
         }
     }

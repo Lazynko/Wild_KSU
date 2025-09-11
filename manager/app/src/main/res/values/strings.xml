@@ -279,19 +279,23 @@
     <string name="individual_app_cards_summary">Show each app in its own card instead of a list</string>
     
     <!-- Season names -->
-    <string name="season_winter">Winter</string>
-    <string name="season_spring">Spring</string>
-    <string name="season_summer">Summer</string>
-    <string name="season_fall">Fall</string>
+    <string-array name="seasons">
+        <item>Winter</item>
+        <item>Spring</item>
+        <item>Summer</item>
+        <item>Fall</item>
+    </string-array>
     
     <!-- Icon type names -->
     <string name="icon_type_off">Off</string>
     <string name="icon_type_seasonal">Seasonal (%s)</string>
-    <string name="icon_type_winter">Winter</string>
-    <string name="icon_type_spring">Spring</string>
-    <string name="icon_type_summer">Summer</string>
-    <string name="icon_type_fall">Fall</string>
-    <string name="icon_type_ksu_next">KSU Next</string>
-    <string name="icon_type_cannabis">Cannabis</string>
-    <string name="icon_type_amongus">Amongus</string>
+    <string-array name="icon_types">
+        <item>Winter</item>
+        <item>Spring</item>
+        <item>Summer</item>
+        <item>Fall</item>
+        <item>KSU Next</item>
+        <item>Cannabis</item>
+        <item>Amongus</item>
+    </string-array>
 </resources>
