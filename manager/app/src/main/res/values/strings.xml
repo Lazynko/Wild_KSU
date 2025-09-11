@@ -278,6 +278,14 @@
     <string name="individual_app_cards">Individual App Cards</string>
     <string name="individual_app_cards_summary">Show each app in its own card instead of a list</string>
     
+    <!-- Info Card Customization -->
+    <string name="info_card_customization">Info Card Customization</string>
+    <string name="info_card_customization_summary">Customize the appearance and behavior of info cards</string>
+    <string name="help_card_customization">Help Card Customization</string>
+    <string name="help_card_customization_summary">Customize the appearance and behavior of help cards</string>
+    <string name="info_card_always_expanded">Always Expanded</string>
+    <string name="info_card_always_expanded_summary">Keep info cards expanded by default</string>
+    
     <!-- Season names -->
     <string-array name="seasons">
         <item>Winter</item>

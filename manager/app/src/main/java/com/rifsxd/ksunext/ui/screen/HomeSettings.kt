@@ -411,7 +411,7 @@ fun HomeSettingsScreen(
                                     )
                                     if (value == "SEASONAL") {
                                         Text(
-                                            text = "Currently: ${IconUtils.getSeasonalIconName()}",
+                                            text = "Currently: ${IconUtils.getSeasonalIconName(context)}",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
