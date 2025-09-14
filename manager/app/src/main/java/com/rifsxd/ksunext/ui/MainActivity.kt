@@ -669,11 +669,7 @@ private fun UnifiedTopBar(
             // TemplateEditor handles its own top bar, so we don't show one here
         }
         BackupRestoreScreenDestination.route -> {
-            SettingsTopBar(
-                title = "Backup & Restore",
-                navigator = navigator,
-                modifier = modifier
-            )
+            // BackupRestoreScreen handles its own top bar, so we don't show one here
         }
         else -> {
             RegularTopBar(

@@ -6,17 +6,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -35,23 +38,38 @@ import kotlinx.coroutines.launch
  * @author rifsxd
  * @date 2025/1/14.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
 fun BackupRestoreScreen(navigator: DestinationsNavigator) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val snackBarHost = LocalSnackbarHost.current
 
     val isManager = Natives.becomeManager(ksuApp.packageName)
     val ksuVersion = if (isManager) Natives.version else null
 
-    val loadingDialog = rememberLoadingDialog()
-    val restoreDialog = rememberConfirmDialog()
-    val backupDialog = rememberConfirmDialog()
+    Scaffold(
+        topBar = {
+            TopBar(
+                onBack = dropUnlessResumed {
+                    navigator.popBackStack()
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+        snackbarHost = { SnackbarHost(snackBarHost) },
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+    ) { paddingValues ->
+        val loadingDialog = rememberLoadingDialog()
+        val restoreDialog = rememberConfirmDialog()
+        val backupDialog = rememberConfirmDialog()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .verticalScroll(rememberScrollState())
+        ) {
 
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
@@ -284,7 +302,29 @@ fun BackupRestoreScreen(navigator: DestinationsNavigator) {
                     }
                 }
             )
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(
+    onBack: () -> Unit = {},
+    scrollBehavior: TopAppBarScrollBehavior? = null
+) {
+    TopAppBar(
+        title = { Text(
+                text = stringResource(R.string.backup_restore),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Black,
+            ) }, navigationIcon = {
+            IconButton(
+                onClick = onBack
+            ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) }
+        },
+        windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        scrollBehavior = scrollBehavior
+    )
 }
 
 @Preview
