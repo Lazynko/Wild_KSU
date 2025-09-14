@@ -505,7 +505,11 @@ fun ThemeSettingsScreen(
                             
                             DropdownMenu(
                                 expanded = showDpiDropdown,
-                                onDismissRequest = { showDpiDropdown = false }
+                                onDismissRequest = { showDpiDropdown = false },
+                                modifier = Modifier.clip(MaterialTheme.shapes.medium),
+                                shape = MaterialTheme.shapes.medium,
+                                tonalElevation = 0.dp,
+                                shadowElevation = 0.dp
                             ) {
                                 dpiPresets.forEach { (dpi, label) ->
                                     DropdownMenuItem(

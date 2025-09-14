@@ -100,7 +100,8 @@ fun ExecuteModuleActionScreen(navigator: DestinationsNavigator, moduleId: String
                     icon = { Icon(Icons.Filled.Close, contentDescription = null) },
                     onClick = {
                         navigator.popBackStack()
-                    }
+                    },
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             }
         },
