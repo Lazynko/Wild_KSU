@@ -1145,6 +1145,10 @@ fun RegularTopBar(
                     DropdownMenu(
                         expanded = showRestartMenu,
                         onDismissRequest = { showRestartMenu = false },
+                        modifier = Modifier.clip(MaterialTheme.shapes.medium),
+                        shape = MaterialTheme.shapes.medium,
+                        tonalElevation = 0.dp,
+                        shadowElevation = 0.dp,
                         offset = DpOffset(0.dp, 16.dp)
                     ) {
                         // Normal reboot

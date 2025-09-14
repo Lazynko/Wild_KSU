@@ -324,6 +324,10 @@ private fun AppMenuBox(packageName: String, content: @Composable () -> Unit) {
             onDismissRequest = {
                 expanded = false
             },
+            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+            shape = MaterialTheme.shapes.medium,
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp
         ) {
             DropdownMenuItem(
                 text = { Text(stringResource(id = R.string.launch_app)) },
