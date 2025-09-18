@@ -389,6 +389,7 @@ jobs:
           body_path: release_notes.md
           prerelease: false
           draft: false
+          overwrite_files: true
           files: |
             normal/*.apk
             spoofed/*.apk
