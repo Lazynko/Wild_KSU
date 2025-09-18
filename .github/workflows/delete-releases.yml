@@ -1,0 +1,52 @@
+name: Delete All Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE" to confirm deletion of all releases'
+        required: true
+        type: string
+
+jobs:
+  delete-releases:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'DELETE'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Delete All Releases
+        run: |
+          echo "🗑️ Starting deletion of all releases..."
+          
+          # Get all releases
+          releases=$(gh release list --limit 1000 --json tagName,name --jq '.[].tagName')
+          
+          if [ -z "$releases" ]; then
+            echo "ℹ️ No releases found to delete"
+            exit 0
+          fi
+          
+          echo "📋 Found releases to delete:"
+          echo "$releases"
+          echo ""
+          
+          # Delete each release
+          for tag in $releases; do
+            echo "🗑️ Deleting release: $tag"
+            gh release delete "$tag" --yes --cleanup-tag
+            echo "✅ Deleted: $tag"
+          done
+          
+          echo ""
+          echo "🎉 All releases have been deleted successfully!"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Confirmation Required
+        if: github.event.inputs.confirm != 'DELETE'
+        run: |
+          echo "❌ Deletion cancelled - confirmation not provided"
+          echo "To delete all releases, you must type 'DELETE' in the confirm input"
+          exit 1
