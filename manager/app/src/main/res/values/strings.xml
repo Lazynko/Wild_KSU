@@ -135,6 +135,10 @@
     <string name="module_downloading">Downloading module: %s</string>
     <string name="module_start_downloading">Start downloading: %s</string>
     <string name="new_version_available">New version %s is available, click to upgrade.</string>
+    <string name="uninstall_and_update">Uninstall and Update</string>
+    <string name="spoofed_update_warning_title">Spoofed Version Update</string>
+    <string name="spoofed_update_warning_message">You must uninstall the previous spoofed version before installing the new one. This will remove all configured settings and data. Do you want to continue?</string>
+    <string name="uninstall_confirm">Confirm</string>
     <string name="launch_app">Launch</string>
     <string name="close">Close</string>
     <string name="force_stop_app">Force stop</string>
