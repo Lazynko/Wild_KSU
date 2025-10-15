@@ -134,7 +134,7 @@
     <string name="module_updated">Updated</string>
     <string name="module_downloading">Downloading module: %s</string>
     <string name="module_start_downloading">Start downloading: %s</string>
-    <string name="new_version_available">New version %s is available, click to upgrade.</string>
+    <string name="new_version_available">App update %s is available, click to upgrade!</string>
     <string name="launch_app">Launch</string>
     <string name="close">Close</string>
     <string name="force_stop_app">Force stop</string>
@@ -146,6 +146,10 @@
     <string name="failed_to_update_sepolicy">Failed to update SELinux rules for %s</string>
     <string name="su_not_allowed">Couldn\'t grant Superuser access to %s</string>
     <string name="module_changelog">Changelog</string>
+    <string name="spoofed_version_warning_title">Spoofed Version Update</string>
+    <string name="spoofed_version_warning_message">You are using a spoofed version. To update, the app must be uninstalled first and you will lose all data. Continue?</string>
+    <string name="uninstall_and_update">Uninstall and Update</string>
+    <string name="app_update">App update</string>
     <string name="settings_profile_template">App Profile template</string>
     <string name="settings_profile_template_summary">Manage local and online template of App Profile</string>
     <string name="app_profile_template_create">Create template</string>

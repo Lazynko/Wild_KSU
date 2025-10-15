@@ -291,13 +291,48 @@ fun UpdateCard() {
     val uriHandler = LocalUriHandler.current
     val title = stringResource(id = R.string.module_changelog)
     val updateText = stringResource(id = R.string.module_update)
+    
+    // Pre-compute string resources for spoofed warning
+    val spoofedWarningTitle = stringResource(id = R.string.spoofed_version_warning_title)
+    val spoofedWarningMessage = stringResource(id = R.string.spoofed_version_warning_message)
+    val uninstallAndUpdateText = stringResource(id = R.string.uninstall_and_update)
 
     AnimatedVisibility(
         visible = shouldShowUpdate,
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
+        val updateDialog = rememberConfirmDialog(onConfirm = { 
+            if (isCurrentSpoofed) {
+                // For spoofed versions, show warning dialog after changelog confirmation
+                spoofedWarningDialog.showConfirm(
+                    title = spoofedWarningTitle,
+                    content = spoofedWarningMessage,
+                    confirm = uninstallAndUpdateText
+                )
+            } else {
+                // For normal versions, go directly to download
+                uriHandler.openUri(newVersionUrl)
+            }
+        })
+        
+        val spoofedWarningDialog = rememberConfirmDialog(onConfirm = {
+            // Uninstall current app and redirect to download page
+            try {
+                val packageManager = context.packageManager
+                val intent = android.content.Intent(android.content.Intent.ACTION_DELETE)
+                intent.data = android.net.Uri.parse("package:${context.packageName}")
+                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                
+                // After uninstall intent, open download URL
+                uriHandler.openUri(newVersionUrl)
+            } catch (e: Exception) {
+                // Fallback: just open download URL
+                uriHandler.openUri(newVersionUrl)
+            }
+        })
+        
         val message = stringResource(id = R.string.new_version_available).format(newVersionCode)
         
         WarningCard(
@@ -305,8 +340,18 @@ fun UpdateCard() {
             MaterialTheme.colorScheme.outlineVariant
         ) {
             if (changelog.isEmpty()) {
-                uriHandler.openUri(newVersionUrl)
+                if (isCurrentSpoofed) {
+                    // Show spoofed warning directly if no changelog
+                    spoofedWarningDialog.showConfirm(
+                        title = spoofedWarningTitle,
+                        content = spoofedWarningMessage,
+                        confirm = uninstallAndUpdateText
+                    )
+                } else {
+                    uriHandler.openUri(newVersionUrl)
+                }
             } else {
+                // Show changelog first, then handle spoofed/normal flow in onConfirm
                 updateDialog.showConfirm(
                     title = title,
                     content = changelog,
