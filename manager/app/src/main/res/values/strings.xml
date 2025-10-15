@@ -141,6 +141,11 @@
     <string name="spoofed_version_warning_message">You are using a spoofed version. To update, the app will be uninstalled and you will lose all data. Continue?</string>
     <string name="spoofed_version_warning_confirm">Uninstall and Update</string>
     <string name="spoofed_version_warning_cancel">Cancel</string>
+    <string name="uninstall_and_update">Uninstall and Update</string>
+    <string name="update_button">Update</string>
+    <string name="home_layout_option_stock">Stock</string>
+    <string name="home_layout_option_miui_square">MIUI Square</string>
+    <string name="home_layout_option_miui_rectangle">MIUI Rectangle</string>
     <string name="launch_app">Launch</string>
     <string name="close">Close</string>
     <string name="force_stop_app">Force stop</string>

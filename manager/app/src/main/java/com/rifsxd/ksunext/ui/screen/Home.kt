@@ -323,6 +323,10 @@ fun UpdateCard() {
         // Regular update dialog for normal versions
         val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
         
+        // Pre-compute string resources outside the lambda
+        val spoofedWarningTitle = stringResource(id = R.string.spoofed_version_warning_title)
+        val spoofedWarningMessage = stringResource(id = R.string.spoofed_version_warning_message)
+        
         WarningCard(
             message = message,
             MaterialTheme.colorScheme.outlineVariant
@@ -330,8 +334,8 @@ fun UpdateCard() {
             if (isCurrentSpoofed) {
                 // Show warning dialog for spoofed versions
                 spoofedWarningDialog.showConfirm(
-                    title = stringResource(id = R.string.spoofed_version_warning_title),
-                    content = stringResource(id = R.string.spoofed_version_warning_message),
+                    title = spoofedWarningTitle,
+                    content = spoofedWarningMessage,
                     markdown = false,
                     confirm = updateText
                 )
