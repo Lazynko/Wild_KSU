@@ -303,12 +303,6 @@ fun UpdateCard() {
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        // Pre-compute string resources outside of onClick lambda
-        val spoofedWarningTitle = stringResource(id = R.string.spoofed_update_warning_title)
-        val spoofedWarningMessage = stringResource(id = R.string.spoofed_update_warning_message)
-        val spoofedConfirmText = stringResource(id = R.string.spoofed_confirm_button)
-        val cancelText = stringResource(id = android.R.string.cancel)
-        
         val updateDialog = rememberConfirmDialog(onConfirm = { 
             if (isCurrentSpoofed) {
                 // For spoofed versions, show uninstall confirmation first
@@ -333,10 +327,10 @@ fun UpdateCard() {
             if (isCurrentSpoofed) {
                 // For spoofed versions, show warning dialog first
                 spoofedConfirmDialog.showConfirm(
-                    title = spoofedWarningTitle,
-                    content = spoofedWarningMessage,
-                    confirm = spoofedConfirmText,
-                    dismiss = cancelText
+                    title = stringResource(id = R.string.spoofed_update_warning_title),
+                    content = stringResource(id = R.string.spoofed_update_warning_message),
+                    confirm = stringResource(id = R.string.spoofed_confirm_button),
+                    dismiss = stringResource(id = android.R.string.cancel)
                 )
             } else {
                 // For normal versions, show changelog or direct update
