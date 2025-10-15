@@ -290,97 +290,31 @@ fun UpdateCard() {
 
     val uriHandler = LocalUriHandler.current
     val title = stringResource(id = R.string.module_changelog)
-    
-    // Different button text based on version type
-    val updateText = if (isCurrentSpoofed) {
-        stringResource(id = R.string.spoofed_uninstall_and_update)
-    } else {
-        stringResource(id = R.string.module_update)
-    }
+    val updateText = stringResource(id = R.string.module_update)
 
     AnimatedVisibility(
         visible = shouldShowUpdate,
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { 
-            if (isCurrentSpoofed) {
-                // For spoofed versions, show uninstall confirmation first
-                handleSpoofedUpdate(context, uriHandler, newVersionUrl)
-            } else {
-                // For normal versions, just open the download URL
-                uriHandler.openUri(newVersionUrl)
-            }
-        })
-        
-        val spoofedConfirmDialog = rememberConfirmDialog(onConfirm = {
-            // Uninstall the app and redirect to download page
-            uninstallAndRedirect(context, uriHandler, newVersionUrl)
-        })
-        
+        val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
         val message = stringResource(id = R.string.new_version_available).format(newVersionCode)
         
         WarningCard(
             message = message,
             MaterialTheme.colorScheme.outlineVariant
         ) {
-            if (isCurrentSpoofed) {
-                // For spoofed versions, show warning dialog first
-                spoofedConfirmDialog.showConfirm(
-                    title = stringResource(id = R.string.spoofed_update_warning_title),
-                    content = stringResource(id = R.string.spoofed_update_warning_message),
-                    confirm = stringResource(id = R.string.spoofed_confirm_button),
-                    dismiss = stringResource(id = android.R.string.cancel)
-                )
+            if (changelog.isEmpty()) {
+                uriHandler.openUri(newVersionUrl)
             } else {
-                // For normal versions, show changelog or direct update
-                if (changelog.isEmpty()) {
-                    uriHandler.openUri(newVersionUrl)
-                } else {
-                    updateDialog.showConfirm(
-                        title = title,
-                        content = changelog,
-                        markdown = true,
-                        confirm = updateText
-                    )
-                }
+                updateDialog.showConfirm(
+                    title = title,
+                    content = changelog,
+                    markdown = true,
+                    confirm = updateText
+                )
             }
         }
-    }
-}
-
-private fun handleSpoofedUpdate(context: Context, uriHandler: androidx.compose.ui.platform.UriHandler, downloadUrl: String) {
-    // This function handles the spoofed version update process
-    uninstallAndRedirect(context, uriHandler, downloadUrl)
-}
-
-private fun uninstallAndRedirect(context: Context, uriHandler: androidx.compose.ui.platform.UriHandler, downloadUrl: String) {
-    try {
-        // Create an intent to uninstall the current app
-        val packageName = context.packageName
-        val intent = android.content.Intent(android.content.Intent.ACTION_DELETE).apply {
-            data = android.net.Uri.parse("package:$packageName")
-            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
-        
-        // Note: The app will be closed after uninstall, so the redirect to download page
-        // won't happen from here. The user will need to manually navigate to the download page.
-        // Alternatively, we could show a toast with the download URL before uninstalling.
-        android.widget.Toast.makeText(
-            context, 
-            "After uninstalling, please visit: $downloadUrl", 
-            android.widget.Toast.LENGTH_LONG
-        ).show()
-        
-    } catch (e: Exception) {
-        // If uninstall fails, just redirect to download page
-        uriHandler.openUri(downloadUrl)
-        android.widget.Toast.makeText(
-            context, 
-            "Please manually uninstall the current version before installing the new one.", 
-            android.widget.Toast.LENGTH_LONG
-        ).show()
     }
 }
 
