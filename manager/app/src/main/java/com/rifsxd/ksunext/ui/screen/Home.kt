@@ -116,7 +116,7 @@ fun HomeScreen(navigator: DestinationsNavigator) {
 
         // Only show this item if there's actual content to display
         val debugWarningCard = prefs.getBoolean("debug_warning_card", false)
-        val checkUpdate = prefs.getBoolean("check_update", false)
+        val checkUpdate = prefs.getBoolean("check_update", true)
         
         val hasRootContent = ksuVersion != null && rootAvailable()
         val hasWarningContent = debugWarningCard || (isManager && Natives.requireNewKernel()) || 

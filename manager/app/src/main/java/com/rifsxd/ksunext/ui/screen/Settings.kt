@@ -258,7 +258,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         // Second Card: App Settings
         item {
             StandardCard {
-                val checkUpdate by observePreferenceAsState(prefs, "check_update", false)
+                val checkUpdate by observePreferenceAsState(prefs, "check_update", true)
                 CardSwitchContent(
                     icon = Icons.Filled.Update,
                     title = stringResource(id = R.string.settings_check_update),
