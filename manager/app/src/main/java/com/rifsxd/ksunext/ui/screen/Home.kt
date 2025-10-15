@@ -282,37 +282,71 @@ fun UpdateCard() {
     // Check if current version is spoofed
     val isCurrentSpoofed = currentVersionName.contains("-spoofed")
     
-    // Show update if:
-    // 1. New version code is higher than current, OR
-    // 2. Current version is spoofed and there's a spoofed update available with higher version code
-    val shouldShowUpdate = newVersionCode > currentVersionCode || 
-        (isCurrentSpoofed && newVersionCode > currentVersionCode && newVersionUrl.isNotEmpty())
+    // Show update if new version code is higher than current
+    val shouldShowUpdate = newVersionCode > currentVersionCode && newVersionUrl.isNotEmpty()
 
     val uriHandler = LocalUriHandler.current
     val title = stringResource(id = R.string.module_changelog)
-    val updateText = stringResource(id = R.string.module_update)
+    
+    // Different button text based on version type
+    val updateText = if (isCurrentSpoofed) {
+        stringResource(id = R.string.uninstall_and_update)
+    } else {
+        stringResource(id = R.string.update_button)
+    }
 
     AnimatedVisibility(
         visible = shouldShowUpdate,
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
         val message = stringResource(id = R.string.new_version_available).format(newVersionCode)
+        
+        // Warning dialog for spoofed versions
+        val spoofedWarningDialog = rememberConfirmDialog(
+            onConfirm = {
+                // Try to uninstall first, then open download URL as fallback
+                try {
+                    val packageManager = context.packageManager
+                    val intent = android.content.Intent(android.content.Intent.ACTION_DELETE).apply {
+                        data = android.net.Uri.parse("package:${context.packageName}")
+                        addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    // Fallback to download URL if uninstall fails
+                    uriHandler.openUri(newVersionUrl)
+                }
+            }
+        )
+        
+        // Regular update dialog for normal versions
+        val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
         
         WarningCard(
             message = message,
             MaterialTheme.colorScheme.outlineVariant
         ) {
-            if (changelog.isEmpty()) {
-                uriHandler.openUri(newVersionUrl)
-            } else {
-                updateDialog.showConfirm(
-                    title = title,
-                    content = changelog,
-                    markdown = true,
+            if (isCurrentSpoofed) {
+                // Show warning dialog for spoofed versions
+                spoofedWarningDialog.showConfirm(
+                    title = stringResource(id = R.string.spoofed_version_warning_title),
+                    content = stringResource(id = R.string.spoofed_version_warning_message),
+                    markdown = false,
                     confirm = updateText
                 )
+            } else {
+                // Normal update flow
+                if (changelog.isEmpty()) {
+                    uriHandler.openUri(newVersionUrl)
+                } else {
+                    updateDialog.showConfirm(
+                        title = title,
+                        content = changelog,
+                        markdown = true,
+                        confirm = updateText
+                    )
+                }
             }
         }
     }
