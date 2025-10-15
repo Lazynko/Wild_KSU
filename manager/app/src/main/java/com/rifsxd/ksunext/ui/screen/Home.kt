@@ -302,20 +302,6 @@ fun UpdateCard() {
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { 
-            if (isCurrentSpoofed) {
-                // For spoofed versions, show warning dialog after changelog confirmation
-                spoofedWarningDialog.showConfirm(
-                    title = spoofedWarningTitle,
-                    content = spoofedWarningMessage,
-                    confirm = uninstallAndUpdateText
-                )
-            } else {
-                // For normal versions, go directly to download
-                uriHandler.openUri(newVersionUrl)
-            }
-        })
-        
         val spoofedWarningDialog = rememberConfirmDialog(onConfirm = {
             // Uninstall current app and redirect to download page
             try {
@@ -329,6 +315,20 @@ fun UpdateCard() {
                 uriHandler.openUri(newVersionUrl)
             } catch (e: Exception) {
                 // Fallback: just open download URL
+                uriHandler.openUri(newVersionUrl)
+            }
+        })
+        
+        val updateDialog = rememberConfirmDialog(onConfirm = { 
+            if (isCurrentSpoofed) {
+                // For spoofed versions, show warning dialog after changelog confirmation
+                spoofedWarningDialog.showConfirm(
+                    title = spoofedWarningTitle,
+                    content = spoofedWarningMessage,
+                    confirm = uninstallAndUpdateText
+                )
+            } else {
+                // For normal versions, go directly to download
                 uriHandler.openUri(newVersionUrl)
             }
         })

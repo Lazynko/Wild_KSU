@@ -307,6 +307,11 @@
     <string name="individual_app_cards">Individual App Cards</string>
     <string name="individual_app_cards_summary">Show each app in its own card instead of a list</string>
     
+    <!-- Layout options -->
+    <string name="home_layout_option_stock">Stock</string>
+    <string name="home_layout_option_miui_square">MIUI Square</string>
+    <string name="home_layout_option_miui_rectangle">MIUI Rectangle</string>
+    
     <!-- Icon options -->
     <string name="home_icon_option_off">Off</string>
     <string name="home_icon_option_seasonal">Seasonal (Auto)</string>
