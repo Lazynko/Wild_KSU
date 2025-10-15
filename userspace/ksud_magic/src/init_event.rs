@@ -1,5 +1,6 @@
 use crate::defs::{KSU_MOUNT_SOURCE, NO_MOUNT_PATH, NO_TMPFS_PATH, TEMP_DIR};
 use crate::module::{handle_updated_modules, prune_modules};
+use crate::hybrid_mount::MixedMountDispatcher;
 use crate::{assets, defs, ksucalls, restorecon, utils};
 use anyhow::{Context, Result};
 use log::{info, warn};
@@ -87,7 +88,7 @@ pub fn on_post_data_fs() -> Result<()> {
         warn!("load system.prop failed: {e}");
     }
 
-    // mount module systemlessly by magic mount
+    // mount module systemlessly by hybrid dispatcher
     if !Path::new(NO_MOUNT_PATH).exists() {
         if let Err(e) = mount_modules_systemlessly() {
             warn!("do systemless mount failed: {e}");
@@ -103,7 +104,10 @@ pub fn on_post_data_fs() -> Result<()> {
 
 #[cfg(target_os = "android")]
 pub fn mount_modules_systemlessly() -> Result<()> {
-    crate::magic_mount::magic_mount()
+    // Initialize mixed dispatcher for per-module mount method selection
+    let mut dispatcher = MixedMountDispatcher::new();
+    dispatcher.analyze_modules(defs::MODULE_DIR)?;
+    dispatcher.mount_modules(defs::MODULE_DIR)
 }
 
 #[cfg(not(target_os = "android"))]

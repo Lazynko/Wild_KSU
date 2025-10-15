@@ -97,6 +97,34 @@ enum ModuleType {
     Updated,
 }
 
+#[derive(PartialEq, Eq, Debug, Clone)]
+pub enum ModuleMountType {
+    Default,     // Use system default (global setting)
+    MagicMount,  // Force magic mount for this module
+    OverlayFS,   // Force overlayfs for this module
+}
+
+pub fn get_module_mount_type(module_path: &Path) -> ModuleMountType {
+    let magic_mount_file = module_path.join(defs::MAGIC_MOUNT_FILE_NAME);
+    let overlayfs_mount_file = module_path.join(defs::OVERLAYFS_MOUNT_FILE_NAME);
+    
+    if magic_mount_file.exists() && overlayfs_mount_file.exists() {
+        warn!("Module {} has both magic_mount and overlayfs_mount files, defaulting to magic_mount", 
+              module_path.display());
+        return ModuleMountType::MagicMount;
+    }
+    
+    if magic_mount_file.exists() {
+        return ModuleMountType::MagicMount;
+    }
+    
+    if overlayfs_mount_file.exists() {
+        return ModuleMountType::OverlayFS;
+    }
+    
+    ModuleMountType::Default
+}
+
 fn foreach_module(module_type: ModuleType, mut f: impl FnMut(&Path) -> Result<()>) -> Result<()> {
     let modules_dir = Path::new(match module_type {
         ModuleType::Updated => MODULE_UPDATE_DIR,

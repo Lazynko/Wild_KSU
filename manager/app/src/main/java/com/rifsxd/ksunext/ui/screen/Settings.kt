@@ -131,22 +131,83 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 if (ksuVersion != null && isOverlayAvailable) {
                     CardItemSpacer()
                     
-                    CardSwitchContent(
+                    var showMountSystemDialog by remember { mutableStateOf(false) }
+                    val mountSystemOptions = listOf(
+                        ListOption(titleText = stringResource(id = R.string.mount_system_magic)),
+                        ListOption(titleText = stringResource(id = R.string.mount_system_overlayfs)),
+                        ListOption(titleText = stringResource(id = R.string.mount_system_hybrid))
+                    )
+                    
+                    val currentMountSystem = when {
+                        useOverlayFs -> stringResource(id = R.string.mount_system_overlayfs)
+                        else -> stringResource(id = R.string.mount_system_magic)
+                    }
+                    
+                    CardRowContent(
                         icon = Icons.Filled.Build,
-                        title = stringResource(id = R.string.use_overlay_fs),
-                        subtitle = stringResource(id = R.string.use_overlay_fs_summary),
-                        checked = useOverlayFs
+                        title = stringResource(id = R.string.mount_system_selection),
+                        subtitle = stringResource(id = R.string.mount_system_selection_summary),
+                        trailing = currentMountSystem
                     ) {
-                        prefs.edit().putBoolean("use_overlay_fs", it).apply()
-                        if (it) {
-                            moduleBackup()
-                            updateMountSystemFile(true)
-                        } else {
-                            moduleMigration()
-                            updateMountSystemFile(false)
+                        showMountSystemDialog = true
+                    }
+                    
+                    if (showMountSystemDialog) {
+                        var selectedIndex by remember { 
+                            mutableIntStateOf(if (useOverlayFs) 1 else 0)
                         }
-                        if (isManager) install()
-                        showRebootDialog = true
+                        
+                        ListDialog(
+                            state = rememberUseCaseState(
+                                visible = true,
+                                onFinishedRequest = {
+                                    when (selectedIndex) {
+                                        0 -> { // Magic Mount
+                                            if (useOverlayFs) {
+                                                prefs.edit().putBoolean("use_overlay_fs", false).apply()
+                                                moduleMigration()
+                                                updateMountSystemFile(false)
+                                                if (isManager) install()
+                                                showRebootDialog = true
+                                            }
+                                        }
+                                        1 -> { // OverlayFS
+                                            if (!useOverlayFs) {
+                                                prefs.edit().putBoolean("use_overlay_fs", true).apply()
+                                                moduleBackup()
+                                                updateMountSystemFile(true)
+                                                if (isManager) install()
+                                                showRebootDialog = true
+                                            }
+                                        }
+                                        2 -> { // Mixed Mount (hybrid)
+                                            // Mixed Mount uses the same backend as Magic Mount
+                                            // but with per-module detection capability
+                                            if (useOverlayFs) {
+                                                prefs.edit().putBoolean("use_overlay_fs", false).apply()
+                                                moduleMigration()
+                                                updateMountSystemFile(false)
+                                                if (isManager) install()
+                                                showRebootDialog = true
+                                            }
+                                        }
+                                    }
+                                    showMountSystemDialog = false
+                                },
+                                onCloseRequest = {
+                                    showMountSystemDialog = false
+                                }
+                            ),
+                            header = Header.Default(
+                                title = stringResource(R.string.mount_system_selection),
+                            ),
+                            selection = ListSelection.Single(
+                                showRadioButtons = true,
+                                options = mountSystemOptions
+                            ) { index, _ ->
+                                selectedIndex = index
+                            }
+                        )
                     }
                 }
 
