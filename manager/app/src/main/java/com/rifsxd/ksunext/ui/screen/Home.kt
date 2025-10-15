@@ -290,14 +290,51 @@ fun UpdateCard() {
 
     val uriHandler = LocalUriHandler.current
     val title = stringResource(id = R.string.module_changelog)
-    val updateText = stringResource(id = R.string.module_update)
+    
+    // Different button text based on spoofed status
+    val updateText = if (isCurrentSpoofed) {
+        stringResource(id = R.string.manager_uninstall_update)
+    } else {
+        stringResource(id = R.string.manager_update)
+    }
 
     AnimatedVisibility(
         visible = shouldShowUpdate,
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
+        val spoofedWarningDialog = rememberConfirmDialog(
+            onConfirm = {
+                // For spoofed versions, uninstall the app first
+                try {
+                    val packageManager = context.packageManager
+                    val intent = android.content.Intent(android.content.Intent.ACTION_DELETE).apply {
+                        data = android.net.Uri.parse("package:${context.packageName}")
+                    }
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    // Fallback to opening download URL
+                    uriHandler.openUri(newVersionUrl)
+                }
+            }
+        )
+        
+        val updateDialog = rememberConfirmDialog(onConfirm = { 
+            if (isCurrentSpoofed) {
+                // Show warning dialog for spoofed versions
+                spoofedWarningDialog.showConfirm(
+                    title = stringResource(id = R.string.spoofed_version_warning_title),
+                    content = stringResource(id = R.string.spoofed_version_warning_message),
+                    markdown = false,
+                    confirm = stringResource(id = R.string.spoofed_version_warning_confirm),
+                    dismiss = stringResource(id = R.string.spoofed_version_warning_cancel)
+                )
+            } else {
+                // Normal update - just open URL
+                uriHandler.openUri(newVersionUrl)
+            }
+        })
+        
         val message = stringResource(id = R.string.new_version_available).format(newVersionCode)
         
         WarningCard(
@@ -305,7 +342,18 @@ fun UpdateCard() {
             MaterialTheme.colorScheme.outlineVariant
         ) {
             if (changelog.isEmpty()) {
-                uriHandler.openUri(newVersionUrl)
+                if (isCurrentSpoofed) {
+                    // Show warning dialog for spoofed versions
+                    spoofedWarningDialog.showConfirm(
+                        title = stringResource(id = R.string.spoofed_version_warning_title),
+                        content = stringResource(id = R.string.spoofed_version_warning_message),
+                        markdown = false,
+                        confirm = stringResource(id = R.string.spoofed_version_warning_confirm),
+                        dismiss = stringResource(id = R.string.spoofed_version_warning_cancel)
+                    )
+                } else {
+                    uriHandler.openUri(newVersionUrl)
+                }
             } else {
                 updateDialog.showConfirm(
                     title = title,

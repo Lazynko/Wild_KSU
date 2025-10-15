@@ -137,9 +137,15 @@
     <string name="module_update">Update</string>
     <string name="module_update_available">Update</string>
     <string name="module_updated">Updated</string>
+    <string name="manager_update">Update</string>
+    <string name="manager_uninstall_update">Uninstall and Update</string>
+    <string name="spoofed_version_warning_title">Uninstall Spoofed Version</string>
+    <string name="spoofed_version_warning_message">You are currently using a spoofed version. To update, the current version must be uninstalled first. This will remove all app data and configurations.\n\nDo you want to continue?</string>
+    <string name="spoofed_version_warning_confirm">Uninstall and Update</string>
+    <string name="spoofed_version_warning_cancel">Cancel</string>
     <string name="module_downloading">Downloading module: %s</string>
     <string name="module_start_downloading">Start downloading: %s</string>
-    <string name="new_version_available">New version %s is available, click to upgrade.</string>
+    <string name="new_version_available">Manager update %s is available, click to upgrade.</string>
     <string name="launch_app">Launch</string>
     <string name="close">Close</string>
     <string name="force_stop_app">Force stop</string>
