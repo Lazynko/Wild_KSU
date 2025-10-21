@@ -79,6 +79,49 @@ object Natives {
      */
     external fun isZygiskEnabled(): Boolean
 
+    // KMP (Kernel Module Package) functions
+    /**
+     * Get the number of loaded KMP modules.
+     * @return number of KMP modules, or -1 if error
+     */
+    external fun getKmpModuleCount(): Int
+
+    /**
+     * Get list of loaded KMP modules.
+     * @return array of KMP module names, or empty array if error
+     */
+    external fun getKmpModuleList(): Array<String>
+
+    /**
+     * Get information about a specific KMP module.
+     * @param name module name
+     * @return KMP module info, or null if not found
+     */
+    external fun getKmpModuleInfo(name: String): KmpModuleInfo?
+
+    /**
+     * Load a KMP module from file.
+     * @param path path to the KMP module file
+     * @return true if successful, false otherwise
+     */
+    external fun loadKmpModule(path: String): Boolean
+
+    /**
+     * Unload a KMP module.
+     * @param name module name
+     * @return true if successful, false otherwise
+     */
+    external fun unloadKmpModule(name: String): Boolean
+
+    /**
+     * Control a KMP module with specific command.
+     * @param name module name
+     * @param cmd control command
+     * @param arg command argument
+     * @return control result, or -1 if error
+     */
+    external fun controlKmpModule(name: String, cmd: Int, arg: Long): Long
+
     /**
      * Get the profile of the given package.
      * @param key usually the package name
@@ -122,6 +165,20 @@ object Natives {
 
     val KSU_WORK_DIR = "/data/adb/ksu/"
     val GLOBAL_NAMESPACE_FILE = KSU_WORK_DIR + ".global_mnt"
+
+    @Immutable
+    @Parcelize
+    @Keep
+    data class KmpModuleInfo(
+        val name: String,
+        val version: String,
+        val author: String,
+        val description: String,
+        val license: String,
+        val state: Int, // 0: loaded, 1: unloaded, 2: error
+        val size: Long,
+        val refCount: Int
+    ) : Parcelable
 
     @Immutable
     @Parcelize

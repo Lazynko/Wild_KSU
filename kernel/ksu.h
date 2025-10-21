@@ -25,6 +25,14 @@
 #define CMD_ENABLE_SU 15
 #define CMD_GET_MANAGER_UID 16
 
+// KMP (Kernel Patch Module) commands
+#define CMD_KMP_LOAD 17
+#define CMD_KMP_UNLOAD 18
+#define CMD_KMP_CONTROL 19
+#define CMD_KMP_NUMS 20
+#define CMD_KMP_LIST 21
+#define CMD_KMP_INFO 22
+
 #define CMD_HOOK_MODE 0xC0DEAD1A
 
 #define EVENT_POST_FS_DATA 1

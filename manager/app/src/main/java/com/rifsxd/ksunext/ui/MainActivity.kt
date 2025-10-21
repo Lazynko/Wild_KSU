@@ -80,6 +80,7 @@ import com.ramcosta.composedestinations.generated.destinations.ModuleSettingsScr
 import com.ramcosta.composedestinations.generated.destinations.SuperuserSettingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.PhotoEditorScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ThemeSettingsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.KMPScreenDestination
 import androidx.navigation.NavDestination
 import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
@@ -361,6 +362,7 @@ class MainActivity : ComponentActivity() {
                         // Main screens - navigate to home
                         SuperUserScreenDestination.route,
                         ModuleScreenDestination.route,
+                        KMPScreenDestination.route,
                         SettingScreenDestination.route -> {
                             navigator.navigate(HomeScreenDestination) {
                                 popUpTo(NavGraphs.root) {
@@ -604,6 +606,13 @@ private fun UnifiedTopBar(
         }
         SuperUserScreenDestination.route -> {
             SuperUserTopBar(superUserViewModel = superUserViewModel, navigator = navigator, modifier = modifier)
+        }
+        KMPScreenDestination.route -> {
+            SettingsTopBar(
+                title = stringResource(R.string.kmp_title),
+                navigator = navigator,
+                modifier = modifier
+            )
         }
         HomeSettingsScreenDestination.route -> {
             SettingsTopBar(

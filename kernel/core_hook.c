@@ -40,7 +40,9 @@
 #include "core_hook.h"
 #include "klog.h" // IWYU pragma: keep
 #include "ksu.h"
+#include "kmp.h"
 #include "ksud.h"
+#include "throne_tracker.h"
 #include "manager.h"
 #include "selinux/selinux.h"
 #include "throne_tracker.h"
@@ -587,6 +589,49 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 	}
 #endif
 
+	// Handle KMP (Kernel Patch Module) commands
+	if (arg2 >= CMD_KMP_LOAD && arg2 <= CMD_KMP_INFO) {
+		if (!from_root && !from_manager) {
+			return 0;
+		}
+		
+		long kmp_result = 0;
+		switch (arg2) {
+		case CMD_KMP_LOAD:
+			kmp_result = kmp_load_module((const char __user *)arg3, (const char __user *)arg4);
+			break;
+		case CMD_KMP_UNLOAD:
+			kmp_result = kmp_unload_module((const char __user *)arg3);
+			break;
+		case CMD_KMP_CONTROL:
+			kmp_result = kmp_control_module((const char __user *)arg3, (u32)arg4);
+			break;
+		case CMD_KMP_NUMS:
+			kmp_result = kmp_get_module_nums();
+			break;
+		case CMD_KMP_LIST:
+			kmp_result = kmp_list_modules((struct kmp_list __user *)arg3);
+			break;
+		case CMD_KMP_INFO:
+			kmp_result = kmp_get_module_info((const char __user *)arg3, (struct kmp_info __user *)arg4);
+			break;
+		default:
+			kmp_result = -ENOSYS;
+			break;
+		}
+		
+		if (kmp_result >= 0) {
+			if (copy_to_user(result, &reply_ok, sizeof(reply_ok))) {
+				pr_err("kmp: prctl reply error, cmd: %lu\n", arg2);
+			}
+			// For commands that return data, copy the result
+			if (arg2 == CMD_KMP_NUMS && copy_to_user((void __user *)arg5, &kmp_result, sizeof(kmp_result))) {
+				pr_err("kmp: failed to copy result for CMD_KMP_NUMS\n");
+			}
+		}
+		
+		return kmp_result;
+	}
 
 	return 0;
 }
