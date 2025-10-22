@@ -1,0 +1,168 @@
+name: Download Artifacts and Upload to Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Workflow run ID to download artifacts from'
+        required: true
+        type: string
+      release_tag:
+        description: 'Release tag to upload to (leave empty for latest release)'
+        required: false
+        type: string
+      source_repo:
+        description: 'Source repository (owner/repo format)'
+        required: false
+        type: string
+        default: 'WildKernels/GKI_KernelSU_SUSFS'
+
+jobs:
+  download-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Download artifacts from specified run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ inputs.run_id }}
+          SOURCE_REPO: ${{ inputs.source_repo }}
+        run: |
+          echo "Downloading artifacts from run ID: $RUN_ID"
+          echo "Source repository: $SOURCE_REPO"
+          
+          # Create artifacts directory
+          mkdir -p artifacts
+          
+          # Get all artifacts from the specified run
+          echo "Fetching artifact list..."
+          artifacts_json=$(gh api repos/$SOURCE_REPO/actions/runs/$RUN_ID/artifacts --paginate)
+          
+          # Filter artifacts that end with -AnyKernel3
+          echo "Filtering AnyKernel3 artifacts..."
+          anykernel_artifacts=$(echo "$artifacts_json" | jq -r '.artifacts[] | select(.name | endswith("-AnyKernel3")) | "\(.id) \(.name)"')
+          
+          if [ -z "$anykernel_artifacts" ]; then
+            echo "No AnyKernel3 artifacts found in run $RUN_ID"
+            exit 1
+          fi
+          
+          echo "Found AnyKernel3 artifacts:"
+          echo "$anykernel_artifacts"
+          
+          # Download each AnyKernel3 artifact
+          echo "$anykernel_artifacts" | while read -r artifact_id artifact_name; do
+            echo "Downloading artifact: $artifact_name (ID: $artifact_id)"
+            
+            # Download the artifact
+            gh api repos/$SOURCE_REPO/actions/artifacts/$artifact_id/zip > "artifacts/${artifact_name}.zip"
+            
+            # Extract the zip file
+            cd artifacts
+            unzip -q "${artifact_name}.zip" -d "$artifact_name"
+            rm "${artifact_name}.zip"
+            
+            # Find the actual kernel zip file inside the extracted folder
+            kernel_zip=$(find "$artifact_name" -name "*.zip" -type f | head -1)
+            if [ -n "$kernel_zip" ]; then
+              # Move the kernel zip to the artifacts root with the artifact name
+              mv "$kernel_zip" "${artifact_name}.zip"
+              # Clean up the extracted folder
+              rm -rf "$artifact_name"
+              echo "Processed: ${artifact_name}.zip"
+            else
+              echo "Warning: No zip file found in artifact $artifact_name"
+            fi
+            cd ..
+          done
+          
+          # List downloaded files
+          echo "Downloaded artifacts:"
+          ls -la artifacts/
+
+      - name: Get or create release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [ -n "$RELEASE_TAG" ]; then
+            echo "Using specified release tag: $RELEASE_TAG"
+            # Check if release exists
+            if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+              echo "Release $RELEASE_TAG exists"
+              echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+            else
+              echo "Creating new release: $RELEASE_TAG"
+              gh release create "$RELEASE_TAG" --title "Release $RELEASE_TAG" --notes "Artifacts from workflow run ${{ inputs.run_id }}"
+              echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Using latest release"
+            # Get the latest release tag
+            latest_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+            if [ -n "$latest_tag" ]; then
+              echo "Latest release found: $latest_tag"
+              echo "release_tag=$latest_tag" >> $GITHUB_OUTPUT
+            else
+              echo "No releases found, creating a new one"
+              new_tag="v$(date +%Y%m%d-%H%M%S)"
+              gh release create "$new_tag" --title "Release $new_tag" --notes "Artifacts from workflow run ${{ inputs.run_id }}"
+              echo "release_tag=$new_tag" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Upload artifacts to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.release.outputs.release_tag }}
+        run: |
+          echo "Uploading artifacts to release: $RELEASE_TAG"
+          
+          # Check if artifacts directory exists and has files
+          if [ ! -d "artifacts" ] || [ -z "$(ls -A artifacts/)" ]; then
+            echo "No artifacts to upload"
+            exit 1
+          fi
+          
+          # Upload each artifact to the release
+          for artifact in artifacts/*.zip; do
+            if [ -f "$artifact" ]; then
+              artifact_name=$(basename "$artifact")
+              echo "Uploading: $artifact_name"
+              
+              # Remove existing asset if it exists (to allow re-uploading)
+              if gh release view "$RELEASE_TAG" --json assets --jq ".assets[].name" | grep -q "^$artifact_name$"; then
+                echo "Removing existing asset: $artifact_name"
+                gh release delete-asset "$RELEASE_TAG" "$artifact_name" --yes
+              fi
+              
+              # Upload the new asset
+              gh release upload "$RELEASE_TAG" "$artifact" --clobber
+              echo "Successfully uploaded: $artifact_name"
+            fi
+          done
+          
+          echo "All artifacts uploaded successfully!"
+          echo "Release URL: $(gh release view $RELEASE_TAG --json url --jq '.url')"
+
+      - name: Summary
+        run: |
+          echo "## Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source Run ID**: ${{ inputs.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source Repository**: ${{ inputs.source_repo }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Release**: ${{ steps.release.outputs.release_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Artifacts Downloaded**: $(ls artifacts/*.zip 2>/dev/null | wc -l)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Downloaded Artifacts:" >> $GITHUB_STEP_SUMMARY
+          for artifact in artifacts/*.zip; do
+            if [ -f "$artifact" ]; then
+              echo "- $(basename "$artifact")" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
