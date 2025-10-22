@@ -79,42 +79,42 @@ object Natives {
      */
     external fun isZygiskEnabled(): Boolean
 
-    // KMP (Kernel Module Package) functions
+    // KPM (Kernel Patch Module) functions
     /**
-     * Get the number of loaded KMP modules.
-     * @return number of KMP modules, or -1 if error
+     * Get the number of loaded KPM modules.
+     * @return number of KPM modules, or -1 if error
      */
     external fun getKmpModuleCount(): Int
 
     /**
-     * Get list of loaded KMP modules.
-     * @return array of KMP module names, or empty array if error
+     * Get list of loaded KPM modules.
+     * @return array of KPM module names, or empty array if error
      */
     external fun getKmpModuleList(): Array<String>
 
     /**
-     * Get information about a specific KMP module.
+     * Get information about a specific KPM module.
      * @param name module name
-     * @return KMP module info, or null if not found
+     * @return KPM module info, or null if not found
      */
     external fun getKmpModuleInfo(name: String): KmpModuleInfo?
 
     /**
-     * Load a KMP module from file.
-     * @param path path to the KMP module file
+     * Load a KPM module from file.
+     * @param path path to the KPM module file
      * @return true if successful, false otherwise
      */
     external fun loadKmpModule(path: String): Boolean
 
     /**
-     * Unload a KMP module.
+     * Unload a KPM module.
      * @param name module name
      * @return true if successful, false otherwise
      */
     external fun unloadKmpModule(name: String): Boolean
 
     /**
-     * Control a KMP module with specific command.
+     * Control a KPM module with specific command.
      * @param name module name
      * @param cmd control command
      * @param arg command argument

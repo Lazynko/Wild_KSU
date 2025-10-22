@@ -65,15 +65,15 @@ import com.rifsxd.ksunext.ui.component.SearchAppBar
 import com.rifsxd.ksunext.ui.component.rememberConfirmDialog
 import com.rifsxd.ksunext.ui.component.rememberLoadingDialog
 import com.rifsxd.ksunext.ui.util.*
-import com.rifsxd.ksunext.ui.viewmodel.KMPViewModel
+import com.rifsxd.ksunext.ui.viewmodel.KPMViewModel
 import com.rifsxd.ksunext.ui.theme.getCardElevation
 import androidx.compose.material3.ElevatedCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
-fun KMPScreen(navigator: DestinationsNavigator) {
-    val viewModel: KMPViewModel = viewModel()
+fun KPMScreen(navigator: DestinationsNavigator) {
+    val viewModel: KPMViewModel = viewModel()
     val context = LocalContext.current
     val snackBarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
@@ -170,7 +170,7 @@ fun KMPScreen(navigator: DestinationsNavigator) {
 @Composable
 private fun KMPList(
     navigator: DestinationsNavigator,
-    viewModel: KMPViewModel,
+    viewModel: KPMViewModel,
     modifier: Modifier = Modifier,
     onInstallKMP: () -> Unit,
     onUnloadKMP: (KMPViewModel.KMPInfo) -> Unit,
@@ -195,7 +195,7 @@ private fun KMPList(
 
     PullToRefreshBox(
         isRefreshing = viewModel.isRefreshing,
-        onRefresh = { viewModel.fetchKMPList() },
+        onRefresh = { viewModel.fetchKPMList() },
         modifier = modifier
     ) {
         LazyColumn(
@@ -241,7 +241,7 @@ private fun KMPList(
                 }
             }
 
-            // KMP modules list
+            // KPM modules list
             if (filteredKMPList.isEmpty() && !viewModel.isLoading) {
                 item {
                     Card(
