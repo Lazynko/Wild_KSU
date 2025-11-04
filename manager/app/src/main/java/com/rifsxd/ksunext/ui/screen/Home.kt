@@ -1045,7 +1045,6 @@ fun SquareStatusCard(
      BoxWithConstraints(
          modifier = Modifier.fillMaxWidth()
      ) {
-         val availableWidth = maxWidth
          val spacing = CardConstants.CARD_SPACING
          val availableWidth = maxWidth
          val contentWidth = availableWidth - spacing
@@ -1053,6 +1052,7 @@ fun SquareStatusCard(
          val rectHeight = rectWidth * 0.6f
          val remainingWidth = contentWidth - rectWidth
          val halfCardHeight = (rectHeight - spacing) / 2
+         val availableWidth = maxWidth
 
          // Square formula: half of width minus spacing
          val squareSize = (availableWidth / 2) - (spacing / 2)
