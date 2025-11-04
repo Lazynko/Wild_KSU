@@ -1025,6 +1025,19 @@ fun SquareStatusCard(
     onClickSuperuser: () -> Unit,
     onClickModule: () -> Unit,
 ) {
+    val safeMode = when {
+        Natives.isSafeMode -> " [${stringResource(id = R.string.safe_mode)}]"
+        else -> ""
+    }
+    val workingMode = when {
+        lkmMode == true -> "LKM"
+        lkmMode == false || kernelVersion.isGKI() -> "GKI2"
+        lkmMode == null && kernelVersion.isULegacy() -> "U-LEGACY"
+        lkmMode == null && kernelVersion.isLegacy() -> "LEGACY"
+        lkmMode == null && kernelVersion.isGKI1() -> "GKI1"
+        else -> "NON-STANDARD"
+    }
+    val workingText = "${stringResource(id = R.string.home_working)}$safeMode"
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -1086,82 +1099,36 @@ fun SquareStatusCard(
                     )
                 }
             }
-        }
-        
-        // Right side: Two cards stacked vertically that fill remaining space
-        Column(
-            modifier = Modifier.width(remainingWidth),
-            verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                modifier = Modifier.size(squareSize),
+                onClick = onClickSuperuser
             ) {
-                Card(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(halfCardHeight), // Half the height of the square card
-                    onClick = onClickSuperuser
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.superuser),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
-                        Text(
-                            text = getSuperuserCount().toString(),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-                
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(halfCardHeight), // Half the height of the square card
-                    onClick = onClickModule
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.module),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
-                        Text(
-                            text = getModuleCount().toString(),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
+                    Text(
+                        text = stringResource(R.string.superuser),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(Modifier.height(1.dp))
+                    Text(
+                        text = getSuperuserCount().toString(),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
                 }
             }
         }
     }
-    } // Close BoxWithConstraints
 }
 
 @Composable
@@ -1172,6 +1139,19 @@ fun RectangleStatusCard(
     onClickSuperuser: () -> Unit,
     onClickModule: () -> Unit,
 ) {
+    val safeMode = when {
+        Natives.isSafeMode -> " [${stringResource(id = R.string.safe_mode)}]"
+        else -> ""
+    }
+    val workingMode = when {
+        lkmMode == true -> "LKM"
+        lkmMode == false || kernelVersion.isGKI() -> "GKI2"
+        lkmMode == null && kernelVersion.isULegacy() -> "U-LEGACY"
+        lkmMode == null && kernelVersion.isLegacy() -> "LEGACY"
+        lkmMode == null && kernelVersion.isGKI1() -> "GKI1"
+        else -> "NON-STANDARD"
+    }
+    val workingText = "${stringResource(id = R.string.home_working)}$safeMode"
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -1235,21 +1215,12 @@ fun RectangleStatusCard(
                     )
                 }
             }
-        }
-        
-        // Right side: Two cards stacked vertically that fill remaining space
-        Column(
-            modifier = Modifier.width(remainingWidth),
-            verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING)
-        ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.width(rightCardSize),
+                verticalArrangement = Arrangement.spacedBy(spacing)
             ) {
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(halfCardHeight), // Half the height of the square card
+                    modifier = Modifier.size(rightCardSize),
                     onClick = onClickSuperuser
                 ) {
                     Column(
@@ -1267,7 +1238,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
+                        Spacer(Modifier.height(1.dp))
                         Text(
                             text = getSuperuserCount().toString(),
                             fontSize = 18.sp,
@@ -1276,11 +1247,8 @@ fun RectangleStatusCard(
                         )
                     }
                 }
-                
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(halfCardHeight), // Half the height of the square card
+                    modifier = Modifier.size(rightCardSize),
                     onClick = onClickModule
                 ) {
                     Column(
@@ -1298,7 +1266,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
+                        Spacer(Modifier.height(1.dp))
                         Text(
                             text = getModuleCount().toString(),
                             fontSize = 18.sp,
@@ -1310,7 +1278,6 @@ fun RectangleStatusCard(
             }
         }
     }
-    } // Close BoxWithConstraints
 }
 
 fun getManagerVersion(context: Context): Pair<String, Long> {
