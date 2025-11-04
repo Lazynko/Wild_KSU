@@ -1047,6 +1047,12 @@ fun SquareStatusCard(
      ) {
          val spacing = CardConstants.CARD_SPACING
          val availableWidth = maxWidth
+         val contentWidth = availableWidth - spacing
+         val rectWidth = contentWidth * (2f/3f)
+         val rectHeight = rectWidth * (1f/3f)
+         val remainingWidth = contentWidth - rectWidth
+         val halfCardHeight = (rectHeight - spacing) / 2
+         val availableWidth = maxWidth
 
          // Square formula: half of width minus spacing
          val squareSize = (availableWidth / 2) - (spacing / 2)
