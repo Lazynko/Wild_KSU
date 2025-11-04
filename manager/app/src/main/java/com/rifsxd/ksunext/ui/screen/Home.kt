@@ -1053,8 +1053,10 @@ fun SquareStatusCard(
 
          // Right side: remaining width; stack two cards with half of square height
          val remainingWidth = availableWidth - squareSize - spacing
-         val halfCardHeight = (squareSize - spacing) / 2
-         
+         // Adjust halfCardHeight to allow more space for right cards
+         val halfCardHeight = ((squareSize - spacing) / 2).coerceAtLeast(56.dp)
+         // Optionally, you can use maxOf to ensure a minimum height
+         // val halfCardHeight = maxOf((squareSize - spacing) / 2, 56.dp)
          // Horizontal layout: Perfect square card on left, right cards fill remaining space
          Row(
              modifier = Modifier.fillMaxWidth(),
@@ -1228,12 +1230,13 @@ fun RectangleStatusCard(
          // Rectangle: 2/3 of content width, height = 1/2 of rect width
          val contentWidth = availableWidth - spacing
          val rectWidth = contentWidth * (2f/3f)
-         val rectHeight = rectWidth * 0.5f // <-- change this line
-         
+         val rectHeight = rectWidth * 0.5f
          // Right column gets the remaining 1/3 of content width
          val remainingWidth = contentWidth - rectWidth
-         val halfCardHeight = (rectHeight - spacing) / 2
-         
+         // Adjust halfCardHeight to allow more space for right cards
+         val halfCardHeight = ((rectHeight - spacing) / 2).coerceAtLeast(56.dp)
+         // Optionally, you can use maxOf to ensure a minimum height
+         // val halfCardHeight = maxOf((rectHeight - spacing) / 2, 56.dp)
          // Horizontal layout: Perfect square card on left, right cards fill remaining space
          Row(
              modifier = Modifier.fillMaxWidth(),
