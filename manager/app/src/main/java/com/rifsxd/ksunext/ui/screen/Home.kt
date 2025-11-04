@@ -158,6 +158,34 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                                     }
                                 }
                             )
+                        } else if (selectedLayoutType == "MIUIX_RECTANGLE") {
+                            // Adaptive Rectangle Layout (~70% width main card)
+                            val lkmMode = ksuVersion.let {
+                                if (it >= Natives.MINIMAL_SUPPORTED_KERNEL_LKM && kernelVersion.isGKI()) Natives.isLkmMode else null
+                            }
+                            RectangleStatusCard(
+                                ksuVersion = ksuVersion,
+                                kernelVersion = kernelVersion,
+                                lkmMode = lkmMode,
+                                onClickSuperuser = {
+                                    navigator.navigate(SuperUserScreenDestination) {
+                                        popUpTo(NavGraphs.root) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                onClickModule = {
+                                    navigator.navigate(ModuleScreenDestination) {
+                                        popUpTo(NavGraphs.root) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
                         } else {
                             // STOCK Layout: Side-by-side arrangement
                             CardRow(
@@ -465,22 +493,6 @@ private fun StatusCardContent(
                                 text = stringResource(id = R.string.home_working),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold
-                            )
-                        } else if (selectedLayoutType == "MIUIX_RECTANGLE") {
-                            // Rectangle layout: main card takes ~70% width, with spacing
-                            val lkmMode = ksuVersion.let {
-                                if (it >= Natives.MINIMAL_SUPPORTED_KERNEL_LKM && kernelVersion.isGKI()) Natives.isLkmMode else null
-                            }
-                            RectangleStatusCard(
-                                ksuVersion = ksuVersion,
-                                kernelVersion = kernelVersion,
-                                lkmMode = lkmMode,
-                                onClickSuperuser = {
-                                    navigator.navigate(SuperUserScreenDestination) {}
-                                },
-                                onClickModule = {
-                                    navigator.navigate(ModuleScreenDestination) {}
-                                }
                             )
                         }
 
@@ -1305,7 +1317,7 @@ fun RectangleStatusCard(
                                 onClick = onClickModule
                             ) {
                                 Text(
-                                    text = stringResource(R.string.modules),
+                                    text = stringResource(R.string.module),
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 11.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1360,7 +1372,7 @@ fun RectangleStatusCard(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.modules),
+                            text = stringResource(R.string.module),
                             fontWeight = FontWeight.Medium,
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1372,9 +1384,6 @@ fun RectangleStatusCard(
             }
         }
     }
-}
-    } // Close BoxWithConstraints
-}
 
 fun getManagerVersion(context: Context): Pair<String, Long> {
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)!!
