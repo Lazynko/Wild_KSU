@@ -1022,57 +1022,25 @@ fun SquareStatusCard(
     ksuVersion: Int,
     kernelVersion: KernelVersion,
     lkmMode: Boolean?,
-    onClickSuperuser: () -> Unit = {},
-    onClickModule: () -> Unit = {},
+    onClickSuperuser: () -> Unit,
+    onClickModule: () -> Unit,
 ) {
-    val safeMode = when {
-        Natives.isSafeMode -> " [${stringResource(id = R.string.safe_mode)}]"
-        else -> ""
-    }
-    
-    val workingMode = when {
-        lkmMode == true -> "LKM"
-        lkmMode == false || kernelVersion.isGKI() -> "GKI2"
-        lkmMode == null && kernelVersion.isULegacy() -> "U-LEGACY"
-        lkmMode == null && kernelVersion.isLegacy() -> "LEGACY"
-        lkmMode == null && kernelVersion.isGKI1() -> "GKI1"
-        else -> "NON-STANDARD"
-    }
-    
-    val workingText = "${stringResource(id = R.string.home_working)}$safeMode"
-    
-    // Use BoxWithConstraints to get actual available space dynamically
-     BoxWithConstraints(
-         modifier = Modifier.fillMaxWidth()
-     ) {
-         val availableWidth = maxWidth
-         val spacing = CardConstants.CARD_SPACING
-
-         // Square formula: half of width minus spacing
-         val squareSize = (availableWidth / 2) - (spacing / 2)
-
-         // Right side: remaining width; stack two cards with half of square height
-         val remainingWidth = availableWidth - squareSize - spacing
-         // Adjust halfCardHeight to allow more space for right cards
-         val halfCardHeight = ((squareSize - spacing) / 2).coerceAtLeast(56.dp)
-         // Optionally, you can use maxOf to ensure a minimum height
-         // val halfCardHeight = maxOf((squareSize - spacing) / 2, 56.dp)
-         // Horizontal layout: Perfect square card on left, right cards fill remaining space
-         Row(
-             modifier = Modifier.fillMaxWidth(),
-             horizontalArrangement = Arrangement.spacedBy(spacing),
-             verticalAlignment = Alignment.Top
-         ) {
-        // Main status card - perfect square
-        Card(
-            modifier = Modifier
-                .size(squareSize),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val availableWidth = maxWidth
+        val spacing = CardConstants.CARD_SPACING
+        val squareSize = (availableWidth / 2) - (spacing / 2)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            verticalAlignment = Alignment.Top
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
+            Card(
+                modifier = Modifier.size(squareSize),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
             ) {
                 Column(
                     modifier = Modifier
@@ -1201,73 +1169,28 @@ fun RectangleStatusCard(
     ksuVersion: Int,
     kernelVersion: KernelVersion,
     lkmMode: Boolean?,
-    onClickSuperuser: () -> Unit = {},
-    onClickModule: () -> Unit = {},
+    onClickSuperuser: () -> Unit,
+    onClickModule: () -> Unit,
 ) {
-    val safeMode = when {
-        Natives.isSafeMode -> " [${stringResource(id = R.string.safe_mode)}]"
-        else -> ""
-    }
-    
-    val workingMode = when {
-        lkmMode == true -> "LKM"
-        lkmMode == false || kernelVersion.isGKI() -> "GKI2"
-        lkmMode == null && kernelVersion.isULegacy() -> "U-LEGACY"
-        lkmMode == null && kernelVersion.isLegacy() -> "LEGACY"
-        lkmMode == null && kernelVersion.isGKI1() -> "GKI1"
-        else -> "NON-STANDARD"
-    }
-    
-    val workingText = "${stringResource(id = R.string.home_working)}$safeMode"
-    
-    // Use BoxWithConstraints to get actual available space dynamically
-     BoxWithConstraints(
-         modifier = Modifier.fillMaxWidth()
-     ) {
-         val availableWidth = maxWidth
-         val spacing = CardConstants.CARD_SPACING
-         
-         // Rectangle: 2/3 of content width, height = 1/2 of rect width
-         val contentWidth = availableWidth - spacing
-         val rectWidth = contentWidth * (2f/3f)
-         val rectHeight = rectWidth * 0.5f
-         // Right column gets the remaining 1/3 of content width
-         val remainingWidth = contentWidth - rectWidth
-         // Adjust halfCardHeight to allow more space for right cards
-         val halfCardHeight = ((rectHeight - spacing) / 2).coerceAtLeast(56.dp)
-         // Optionally, you can use maxOf to ensure a minimum height
-         // val halfCardHeight = maxOf((rectHeight - spacing) / 2, 56.dp)
-         // Horizontal layout: Perfect square card on left, right cards fill remaining space
-         Row(
-             modifier = Modifier.fillMaxWidth(),
-             horizontalArrangement = Arrangement.spacedBy(spacing),
-             verticalAlignment = Alignment.Top
-         ) {
-        // Main status card - rectangle
-        Card(
-            modifier = Modifier
-                .width(rectWidth)
-                .height(rectHeight),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val availableWidth = maxWidth
+        val spacing = CardConstants.CARD_SPACING
+        val rightCardSize = (availableWidth - spacing) / 3
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            verticalAlignment = Alignment.Top
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(rightCardSize),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset(10.dp, 15.dp),
-                    contentAlignment = Alignment.BottomEnd
-                ) {
-                    Icon(
-                        modifier = Modifier.size(90.dp),
-                        imageVector = Icons.Outlined.CheckCircleOutline,
-                        tint = Color(0xFF36D167),
-                        contentDescription = null
-                    )
-                }
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
