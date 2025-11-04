@@ -1047,6 +1047,12 @@ fun SquareStatusCard(
      ) {
          val availableWidth = maxWidth
          val spacing = CardConstants.CARD_SPACING
+         val availableWidth = maxWidth
+         val contentWidth = availableWidth - spacing
+         val rectWidth = contentWidth * 0.65f
+         val rectHeight = rectWidth * 0.6f
+         val remainingWidth = contentWidth - rectWidth
+         val halfCardHeight = (rectHeight - spacing) / 2
 
          // Square formula: half of width minus spacing
          val squareSize = (availableWidth / 2) - (spacing / 2)
@@ -1233,8 +1239,8 @@ fun RectangleStatusCard(
         // Main status card - rectangle
         Card(
             modifier = Modifier
-                .weight(1f)
-                .aspectRatio(1f / 0.6f),
+                .width(rectWidth)
+                .height(rectHeight),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
@@ -1304,15 +1310,14 @@ fun RectangleStatusCard(
         // Right side: Two cards stacked vertically that fill remaining space
         Column(
             modifier = Modifier
-                .width(IntrinsicSize.Min)
-                .fillMaxHeight(),
+                .width(remainingWidth),
             verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .height(halfCardHeight),
                 onClick = onClickSuperuser
             ) {
                     Column(
@@ -1343,7 +1348,7 @@ fun RectangleStatusCard(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .height(halfCardHeight),
                 onClick = onClickModule
             ) {
                     Column(
