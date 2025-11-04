@@ -1222,16 +1222,7 @@ fun RectangleStatusCard(
      BoxWithConstraints(
          modifier = Modifier.fillMaxWidth()
      ) {
-         val availableWidth = maxWidth
          val spacing = CardConstants.CARD_SPACING
-         
-         // Rectangle formula: keep half width, reduce height for rectangular aspect
-         val rectWidth = (availableWidth / 2) - (spacing / 2)
-         val rectHeight = rectWidth * 0.6f
-         
-         // Right side: remaining width; stack two cards with half of rectHeight
-         val remainingWidth = availableWidth - rectWidth - spacing
-         val halfCardHeight = (rectHeight - spacing) / 2
          
          // Horizontal layout: Perfect square card on left, right cards fill remaining space
          Row(
@@ -1242,8 +1233,8 @@ fun RectangleStatusCard(
         // Main status card - rectangle
         Card(
             modifier = Modifier
-                .width(rectWidth)
-                .height(rectHeight),
+                .weight(1f)
+                .aspectRatio(1f / 0.6f),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
@@ -1312,19 +1303,18 @@ fun RectangleStatusCard(
         
         // Right side: Two cards stacked vertically that fill remaining space
         Column(
-            modifier = Modifier.width(remainingWidth),
-            verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING)
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(CardConstants.CARD_SPACING),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                onClick = onClickSuperuser
             ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(halfCardHeight), // Half the height of the square card
-                    onClick = onClickSuperuser
-                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -1350,12 +1340,12 @@ fun RectangleStatusCard(
                     }
                 }
                 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(halfCardHeight), // Half the height of the square card
-                    onClick = onClickModule
-                ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                onClick = onClickModule
+            ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -1380,7 +1370,6 @@ fun RectangleStatusCard(
                         )
                     }
                 }
-            }
         }
     }
     } // Close BoxWithConstraints
