@@ -1150,7 +1150,7 @@ fun SquareStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
                         Text(
                             text = getSuperuserCount().toString(),
                             fontSize = 18.sp,
@@ -1181,7 +1181,7 @@ fun SquareStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
                         Text(
                             text = getModuleCount().toString(),
                             fontSize = 18.sp,
@@ -1344,7 +1344,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
                         Text(
                             text = getSuperuserCount().toString(),
                             fontSize = 18.sp,
@@ -1375,7 +1375,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(1.dp)) // Decreased from 2.dp to 1.dp
                         Text(
                             text = getModuleCount().toString(),
                             fontSize = 18.sp,
