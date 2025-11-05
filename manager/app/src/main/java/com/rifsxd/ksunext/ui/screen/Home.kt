@@ -1157,7 +1157,7 @@ fun RectangleStatusCard(
     ) {
         val availableWidth = maxWidth
         val spacing = CardConstants.CARD_SPACING
-        val rightCardSize = (availableWidth - spacing) / 3
+        val rightCardSize = ((availableWidth - spacing) / 3) * 0.8f // reduce size by 20%
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spacing),
