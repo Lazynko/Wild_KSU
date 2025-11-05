@@ -1106,7 +1106,7 @@ fun SquareStatusCard(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(6.dp), // reduced from 8.dp
+                        .padding(16.dp), // match stock card padding
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -1118,7 +1118,7 @@ fun SquareStatusCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(Modifier.height(0.5.dp)) // reduced from 1.dp
+                    Spacer(Modifier.height(CardConstants.ITEM_SPACING_SMALL)) // match stock card spacing
                     Text(
                         text = getSuperuserCount().toString(),
                         fontSize = 18.sp,
@@ -1157,7 +1157,8 @@ fun RectangleStatusCard(
     ) {
         val availableWidth = maxWidth
         val spacing = CardConstants.CARD_SPACING
-        val rightCardSize = ((availableWidth - spacing) / 3) * 0.8f // reduce size by 20%
+        val cardWidth = (availableWidth - spacing * 2) / 3 // match stock card width
+        val cardHeight = 56.dp // match stock card minimum height
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spacing),
@@ -1165,53 +1166,61 @@ fun RectangleStatusCard(
         ) {
             Card(
                 modifier = Modifier
-                    .weight(1f)
-                    .height(rightCardSize),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                    .width(cardWidth)
+                    .height(cardHeight),
+                onClick = onClickSuperuser
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(all = 16.dp)
+                        .padding(16.dp), // match stock card padding
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    val labelStyle = LabelItemDefaults.style
-                    TextRow(
-                        trailingContent = {
-                            LabelItem(
-                                icon = if (Natives.isSafeMode) {
-                                    {
-                                        Icon(
-                                            tint = labelStyle.contentColor,
-                                            imageVector = Icons.Filled.Security,
-                                            contentDescription = null
-                                        )
-                                    }
-                                } else {
-                                    null
-                                },
-                                text = {
-                                    Text(
-                                        text = workingMode,
-                                        style = labelStyle.textStyle.copy(color = labelStyle.contentColor),
-                                    )
-                                }
-                            )
-                        }
-                    ) {
-                        Text(
-                            text = workingText,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    Spacer(Modifier.height(4.dp))
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(R.string.home_working_version, ksuVersion),
-                        fontSize = 12.sp,
+                        text = stringResource(R.string.superuser),
                         fontWeight = FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(Modifier.height(CardConstants.ITEM_SPACING_SMALL)) // match stock card spacing
+                    Text(
+                        text = getSuperuserCount().toString(),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .width(cardWidth)
+                    .height(cardHeight),
+                onClick = onClickModule
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp), // match stock card padding
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.module),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(Modifier.height(CardConstants.ITEM_SPACING_SMALL)) // match stock card spacing
+                    Text(
+                        text = getModuleCount().toString(),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -1226,7 +1235,7 @@ fun RectangleStatusCard(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(6.dp), // reduced from 8.dp
+                            .padding(16.dp), // match stock card padding
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -1238,7 +1247,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(0.5.dp)) // reduced from 1.dp
+                        Spacer(Modifier.height(CardConstants.ITEM_SPACING_SMALL)) // match stock card spacing
                         Text(
                             text = getSuperuserCount().toString(),
                             fontSize = 18.sp,
@@ -1248,13 +1257,15 @@ fun RectangleStatusCard(
                     }
                 }
                 Card(
-                    modifier = Modifier.size(rightCardSize),
+                    modifier = Modifier
+                        .width(cardWidth)
+                        .height(cardHeight),
                     onClick = onClickModule
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(6.dp), // reduced from 8.dp
+                            .padding(16.dp), // match stock card padding
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -1266,7 +1277,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(0.5.dp)) // reduced from 1.dp
+                        Spacer(Modifier.height(CardConstants.ITEM_SPACING_SMALL)) // match stock card spacing
                         Text(
                             text = getModuleCount().toString(),
                             fontSize = 18.sp,
