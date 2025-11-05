@@ -1106,7 +1106,7 @@ fun SquareStatusCard(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(8.dp),
+                        .padding(6.dp), // reduced from 8.dp
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -1118,7 +1118,7 @@ fun SquareStatusCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(Modifier.height(1.dp))
+                    Spacer(Modifier.height(0.5.dp)) // reduced from 1.dp
                     Text(
                         text = getSuperuserCount().toString(),
                         fontSize = 18.sp,
@@ -1226,7 +1226,7 @@ fun RectangleStatusCard(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp),
+                            .padding(6.dp), // reduced from 8.dp
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -1238,7 +1238,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(1.dp))
+                        Spacer(Modifier.height(0.5.dp)) // reduced from 1.dp
                         Text(
                             text = getSuperuserCount().toString(),
                             fontSize = 18.sp,
@@ -1254,7 +1254,7 @@ fun RectangleStatusCard(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp),
+                            .padding(6.dp), // reduced from 8.dp
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -1266,7 +1266,7 @@ fun RectangleStatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(1.dp))
+                        Spacer(Modifier.height(0.5.dp)) // reduced from 1.dp
                         Text(
                             text = getModuleCount().toString(),
                             fontSize = 18.sp,
